@@ -74,7 +74,7 @@ resource "tls_private_key" "SSH" {
     }
 
  provisioner "file" {
-     source = "./Main/2048_deployment_replicated.yaml"
+     source = "2048_deployment_replicated.yaml"
      destination = "/home/group4/2048_deployment_replicated.yaml"
   }
     depends_on = [azurerm_resource_group.Kubernetes]
