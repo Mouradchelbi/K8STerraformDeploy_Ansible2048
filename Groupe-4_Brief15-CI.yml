@@ -1,0 +1,59 @@
+resources:
+  repositories:
+  - repository: self
+    type: git
+    ref: refs/heads/main
+jobs:
+- job: Job_1
+  displayName: terraform
+  pool:
+    name: Default
+  steps:
+  - checkout: self
+    clean: true
+    fetchTags: false
+  - task: TerraformTaskV4@4
+    displayName: 'Terraform : init'
+    inputs:
+      workingDirectory: Main
+      backendServiceArm: 0c0c436d-dcda-4a7a-ace2-04d09a75afc4
+      backendAzureRmResourceGroupName: sambatra-rg
+      backendAzureRmStorageAccountName: rambaris
+      backendAzureRmContainerName: sambatra
+      backendAzureRmKey: tf/terraform.tfstate
+  - task: TerraformTaskV4@4
+    displayName: 'Terraform : plan'
+    inputs:
+      command: plan
+      workingDirectory: Main
+      environmentServiceNameAzureRM: 0c0c436d-dcda-4a7a-ace2-04d09a75afc4
+  - task: TerraformTaskV4@4
+    displayName: 'Terraform : apply'
+    inputs:
+      command: apply
+      workingDirectory: Main
+      commandOptions: -auto-approve
+      environmentServiceNameAzureRM: 0c0c436d-dcda-4a7a-ace2-04d09a75afc4
+  - task: Bash@3
+    displayName: Bash Script
+    inputs:
+      filePath: Main/outputsTFversinventaire.sh
+      workingDirectory: Main
+  - task: CmdLine@2
+    displayName: Command Line Script
+    inputs:
+      script: >-
+        cat id_rsa
+
+        cat hosts.ini
+      workingDirectory: Main
+  - task: CmdLine@2
+    displayName: Ansible
+    inputs:
+      script: ansible-playbook var.yml -i hosts.ini
+      workingDirectory: Main
+  - task: PublishPipelineArtifact@1
+    displayName: Publish Pipeline Artifact
+    inputs:
+      artifactName: Artefact
+...
