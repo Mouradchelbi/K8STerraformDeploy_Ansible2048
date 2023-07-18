@@ -79,3 +79,11 @@ resource "tls_private_key" "SSH" {
   }
     depends_on = [azurerm_resource_group.Kubernetes]
 }
+connection {
+    type     = "ssh"
+    user     = "group4"
+    host     = azurerm_public_ip.test[2].ip_address
+    private_key = tls_private_key.SSH.private_key_pem
+  }
+    depends_on = [azurerm_resource_group.Kubernetes]
+}
