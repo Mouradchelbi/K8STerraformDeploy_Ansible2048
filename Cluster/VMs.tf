@@ -72,18 +72,5 @@ resource "tls_private_key" "SSH" {
       caching = "ReadWrite"
       storage_account_type = "Standard_LRS"
     }
-
- provisioner "file" {
-     source = "2048_deployment_replicated.yaml"
-     destination = "/home/group4/2048_deployment_replicated.yaml"
-  }
-    depends_on = [azurerm_resource_group.Kubernetes]
-}
-connection {
-    type     = "ssh"
-    user     = "group4"
-    host     = azurerm_public_ip.test[2].ip_address
-    private_key = tls_private_key.SSH.private_key_pem
-  }
     depends_on = [azurerm_resource_group.Kubernetes]
 }
